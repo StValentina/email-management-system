@@ -1,0 +1,189 @@
+{
+  "name": "load-services-to-pinecone",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6752e64d-2809-4d10-aac5-db5f3ad52037",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ae5f3a52-3ed6-4841-a726-a2bb60c58cd4",
+              "name": "text",
+              "value": "LINGUATECH SOLUTIONS\nSERVICES CATALOGUE\n\n1. RAG KNOWLEDGE ASSISTANT DEVELOPMENT\n\nDescription:\nDesign and implementation of a retrieval-augmented generation assistant that answers questions using a client's own documents and knowledge sources.\n\nSuitable for:\nOrganizations with internal documentation, policies, manuals, research materials, product information, or other text collections that need searchable AI-assisted access.\n\nStarting price:\nEUR 2,400\n\nTypical duration:\n3–6 weeks\n\nTypical deliverables:\n- requirements analysis\n- document ingestion pipeline\n- vector database configuration\n- retrieval setup\n- prompt and response configuration\n- basic evaluation dataset\n- deployment documentation\n\nLimitations:\nThe starting price assumes one primary document collection and a standard integration. Complex authentication, multiple enterprise systems, large-scale migration, multilingual customization, or advanced UI development require separate evaluation.\n\nNo guarantee of 100% factual accuracy is provided. High-impact outputs should be reviewed by a qualified person.\n\n\n2. CUSTOM BUSINESS CHATBOT\n\nDescription:\nDevelopment of a conversational assistant for customer support, internal information access, or service guidance.\n\nSuitable for:\nBusinesses that need a chatbot based on structured business information, FAQs, service descriptions, or internal documentation.\n\nStarting price:\nEUR 1,800\n\nTypical duration:\n2–5 weeks\n\nTypical deliverables:\n- chatbot requirements analysis\n- conversation flow design\n- prompt configuration\n- knowledge integration\n- basic testing\n- deployment documentation\n\nLimitations:\nExternal system integrations, CRM access, payment processing, custom authentication, voice interfaces, or complex web application development are not included in the starting price.\n\n\n3. NLP AND LLM EVALUATION\n\nDescription:\nEvaluation of NLP models, large language models, prompts, RAG systems, or automated text-processing pipelines using predefined criteria and test datasets.\n\nSuitable for:\nResearch teams, software companies, and organizations that need structured comparison of model quality or system behavior.\n\nStarting price:\nEUR 1,200\n\nTypical duration:\n1–4 weeks\n\nTypical deliverables:\n- evaluation plan\n- test dataset preparation or adaptation\n- selected metrics\n- experiment execution\n- results table\n- written evaluation summary\n\nLimitations:\nLarge-scale human annotation, extensive domain-expert validation, paid external benchmarks, or very large model comparison studies require separate estimation.\n\n\n4. TEXT DATA PROCESSING AND STRUCTURING\n\nDescription:\nCleaning, normalization, transformation, extraction, and structuring of text data for downstream analysis, NLP, search, or AI applications.\n\nSuitable for:\nOrganizations with unstructured or inconsistent text collections, exported documents, scraped content, survey responses, archives, or other textual datasets.\n\nStarting price:\nEUR 700\n\nTypical duration:\n1–3 weeks\n\nTypical deliverables:\n- data inspection\n- cleaning and normalization\n- agreed text transformation\n- structured output in CSV, JSON, TXT, or another agreed format\n- processing summary\n\nLimitations:\nOCR-intensive projects, highly damaged documents, large-scale manual correction, or processing of restricted data may require separate evaluation.\n\n\n5. CORPUS CREATION AND LINGUISTIC ANNOTATION\n\nDescription:\nDesign and preparation of specialized text corpora with linguistic or task-specific annotation.\n\nSuitable for:\nResearch projects, NLP development teams, language technology companies, and organizations building training or evaluation datasets.\n\nStarting price:\nEUR 1,500\n\nTypical duration:\n2–8 weeks\n\nTypical deliverables:\n- annotation guidelines\n- corpus structure\n- annotated sample or dataset\n- quality-control procedure\n- final export in an agreed format\n\nLimitations:\nThe price depends strongly on corpus size, annotation complexity, number of annotators, domain expertise, and required quality-control level. Large annotation projects require a custom quotation.\n\n\n6. NLP AND LANGUAGE TECHNOLOGY CONSULTING\n\nDescription:\nSpecialist consulting on NLP workflows, linguistic resources, LLM applications, RAG architecture, evaluation methodology, or text-data strategy.\n\nSuitable for:\nTeams that need expert guidance before starting or redesigning an NLP or AI project.\n\nPrice:\nEUR 120 per hour\n\nMinimum engagement:\n2 hours\n\nTypical deliverables:\n- consultation session\n- technical or methodological recommendations\n- short written summary when agreed\n\nLimitations:\nConsulting does not automatically include implementation, software development, dataset creation, or ongoing support unless these are separately agreed.\n\n\n7. CORPORATE TRAINING: PRACTICAL LLM AND NLP WORKFLOWS\n\nDescription:\nPractical training for teams on topics such as LLM usage, prompt design, RAG concepts, NLP workflows, evaluation, and responsible use of AI systems.\n\nSuitable for:\nCompanies, research organizations, educational teams, and professional groups.\n\nStarting price:\nEUR 950 per half-day session\n\nTypical duration:\n3–4 hours\n\nTypical deliverables:\n- live training\n- presentation materials\n- practical demonstrations\n- Q&A session\n\nLimitations:\nHighly customized training programs, travel, multilingual delivery, or multi-day courses require separate quotation.\n\n\n8. CUSTOM NLP AUTOMATION\n\nDescription:\nDesign of automated workflows for repetitive language and text-processing tasks, including classification, extraction, summarization, routing, or document-processing pipelines.\n\nSuitable for:\nOrganizations that need to automate recurring text-heavy administrative or operational processes.\n\nStarting price:\nEUR 1,600\n\nTypical duration:\n2–6 weeks\n\nTypical deliverables:\n- workflow analysis\n- automation design\n- selected integrations\n- text-processing or AI components\n- testing\n- technical documentation\n\nLimitations:\nFinal pricing depends on the number of integrations, workflow complexity, data volume, security requirements, and external platform limitations.\n\n\nGENERAL SALES POLICIES\n\nAll listed prices are starting prices and are provided for initial guidance only.\n\nA final quotation is prepared only after the project scope, required data, integrations, expected deliverables, and technical constraints have been reviewed.\n\nLinguaTech Solutions does not guarantee that a project can be completed at the starting price shown in this catalogue.\n\nThe Leads Agent may explain services, starting prices, typical duration, deliverables, and stated limitations from this knowledge base.\n\nThe Leads Agent must not invent discounts, negotiate prices, guarantee final pricing, promise an exact delivery date, or claim capabilities that are not described in this catalogue.\n\nIf a request involves requirements outside the documented services, unclear technical feasibility, legal or security-sensitive requirements, or a request for a binding quotation, the request must be escalated for human review.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "732b8d20-b36d-45a3-b44e-61325e70e663",
+      "name": "Business Services"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "customer-support",
+          "mode": "list",
+          "cachedResultName": "customer-support"
+        },
+        "options": {
+          "pineconeNamespace": "services"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        480,
+        0
+      ],
+      "id": "9f3a5026-ed25-4fa2-b9b0-4c80fc0d00fc",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "FqYaA1MjxZRWvdjx",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.text }}",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        592,
+        240
+      ],
+      "id": "91ecd2c2-44d2-412e-84af-bbe10007ef6e",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        240
+      ],
+      "id": "9399adc8-261a-4fc8-99fd-501568d52f0f",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "aeKP4TgBNhDvZjMq",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chunkSize": 600,
+        "chunkOverlap": 80,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        672,
+        448
+      ],
+      "id": "ef5db5f9-864d-4b74-b3f4-f984b9e5eee8",
+      "name": "Recursive Character Text Splitter"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Business Services",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Business Services": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "a0ae15f8-07c3-4e4e-a160-2dc4474296e3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f16036b14ec005d72c1825cb15655ac025ac2d861a0f80604cddce9ea9a5af97"
+  },
+  "nodeGroups": [],
+  "id": "PyYbLzGUluTArQrJ",
+  "tags": []
+}

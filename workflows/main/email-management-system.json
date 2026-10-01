@@ -1,0 +1,1215 @@
+{
+  "name": "email-management-system",
+  "nodes": [
+    {
+      "parameters": {
+        "inputText": "=From: {{ $json.senderName }}; {{ $json.senderEmail }}\nSubject: {{ $json.subject }}\nEmail body: {{ $json.emailBody }}\nExisting client: {{ $json.existingClient ? 'yes' : 'no' }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Client Support & Service Requests",
+              "description": "Emails from existing or past clients asking for help, clarification, troubleshooting, changes, support, status updates, or information related to a service or project they already use or have previously purchased from LinguaTech Solutions.\n\nIncludes questions about existing RAG/chatbot systems, NLP solutions, delivered datasets, annotations, consultations, maintenance, access, technical issues, service policies, or previously agreed work.\n\nDo NOT use this category for a new project, a new service quotation, pricing for work not yet purchased, invoices, payment documents, or internal team communication."
+            },
+            {
+              "category": "Billing & Payments",
+              "description": "Emails primarily related to financial transactions, invoices, receipts, payment confirmations, amounts due, billing documents, VAT information, vendor invoices, or other accounting and payment matters involving LinguaTech Solutions.\n\nUse this category when the main purpose of the email is financial processing.\n\nDo NOT classify general questions about the price of a potential new service here; those belong to Projects & Service Inquiries."
+            },
+            {
+              "category": "Projects & Service Inquiries",
+              "description": "Emails from potential clients or existing clients asking about a new project, new service, quotation, pricing, capabilities, scope, timeline, proposal, consultation, demo, or potential cooperation with LinguaTech Solutions.\n\nIncludes requests for RAG/chatbot development, NLP or LLM evaluation, text processing, corpus or annotation projects, training, and other services not already covered by an existing active service request.\n\nDo NOT use this category for troubleshooting or support concerning an already purchased service."
+            },
+            {
+              "category": "Team & Operations",
+              "description": "Emails from employees using our company domain (@example.com).\n\nEmails that are part of LinguaTech Solutions' internal business communication, including messages from employees, managers, contractors, or recognized internal collaborators about meetings, schedules, assignments, project coordination, internal reports, deadlines, operational updates, or administrative matters.\n\nInternal sender identity and business context are strong indicators.\n\nDo NOT use this category for customer, supplier, sales, or payment communication merely because it discusses a company project."
+            }
+          ]
+        },
+        "options": {
+          "fallback": "other",
+          "enableAutoFixing": false
+        }
+      },
+      "id": "f37041e3-fb62-48ce-a310-d0874668fc74",
+      "name": "Text Classifier",
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        992,
+        -640
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "e2a4a705-8207-4131-be17-455e7538d058",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1072,
+        -320
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "aeKP4TgBNhDvZjMq",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "q": "in:inbox -from:me -subject:\"[AGENT]\""
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        96,
+        -640
+      ],
+      "id": "7490680d-feba-4202-bbce-9cc2555928fa",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ZZouarnIRNggi8MZ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $json.id }}",
+        "simple": false,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        -640
+      ],
+      "id": "40975a83-95d6-45b0-9f02-de334b443b80",
+      "name": "Get a message",
+      "webhookId": "feebc2d3-7dcf-42a2-9d23-b4b9cd83d3ef",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ZZouarnIRNggi8MZ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $env.EMS_MAIN_SHEET_ID }}",
+          "mode": "list",
+          "cachedResultName": "Clients",
+          "cachedResultUrl": "={{ 'https://docs.google.com/spreadsheets/d/' + $env.EMS_MAIN_SHEET_ID + '/edit?usp=drivesdk' }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "={{ 'https://docs.google.com/spreadsheets/d/' + $env.EMS_MAIN_SHEET_ID + '/edit#gid=0' }}"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ $json.headers.from.match(/<([^>]+)>/)    ? $json.headers.from.match(/<([^>]+)>/)[1].toLowerCase()    : $json.headers.from.toLowerCase() }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        544,
+        -640
+      ],
+      "id": "e331bcdf-7bc1-4e91-a4bb-80a3922dd9c9",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Zkt5AfYhDY9bu68e",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "79423df2-b528-4b7d-9344-ff7200eb1f90",
+              "name": "messageId",
+              "value": "={{ $('Get a message').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "7391d1e1-6b1a-43d6-93bc-fa2746256944",
+              "name": "threadId",
+              "value": "={{ $('Get a message').item.json.threadId }}",
+              "type": "string"
+            },
+            {
+              "id": "765a14e5-e040-4f0b-8e47-895d0791c6ad",
+              "name": "senderName",
+              "value": "={{ $('Get a message').item.json.from.value[0].name }}",
+              "type": "string"
+            },
+            {
+              "id": "0147e9c4-787e-448c-a165-ec0eeaa8d1f3",
+              "name": "senderEmail",
+              "value": "={{ $('Get a message').item.json.from.value[0].address }}",
+              "type": "string"
+            },
+            {
+              "id": "37dd521a-2010-46bc-8545-256df0268c58",
+              "name": "subject",
+              "value": "={{ $('Get a message').item.json.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "1100ac2e-e24c-4688-b17b-6073159d8c16",
+              "name": "emailBody",
+              "value": "={{ $('Get a message').item.json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "86a0d2a4-8220-490e-9ba6-bef0e11802f6",
+              "name": "existingClient",
+              "value": "={{ $json.Email ? 'yes' : 'no' }}",
+              "type": "string"
+            },
+            {
+              "id": "c60923c0-6e00-45e2-826a-3ac06ca53116",
+              "name": "clientName",
+              "value": "={{ $json.Name || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "baf1535c-9d95-435b-bdbc-dcbec609301f",
+              "name": "company",
+              "value": "={{ $json.Company || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "870e2ebe-ba70-47d1-84fb-656f80538eae",
+              "name": "clientSince",
+              "value": "={{ $json['Client since'] || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "0f9d2ab1-98b1-4969-b881-436d00fb2bdf",
+              "name": "plan",
+              "value": "={{ $json.Plan || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "c1cf397f-486f-4aee-8f39-ec2864b640b6",
+              "name": "lastOrder",
+              "value": "={{ $json['Last order'] || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "dc1d96d2-bee1-490f-b21d-e590b33735f2",
+              "name": "notes",
+              "value": "={{ $json.Notes || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        768,
+        -640
+      ],
+      "id": "22a6c623-1afd-4fa7-a084-442dd1b35045",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "S0sMEYU06zqcZwQ1",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/S0sMEYU06zqcZwQ1",
+          "cachedResultName": "client-support"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "emailBody": "={{ $json.emailBody }}",
+            "subject": "={{ $json.subject }}",
+            "senderEmail": "={{ $json.senderEmail }}",
+            "senderName": "={{ $json.senderName }}",
+            "threadId": "={{ $json.threadId }}",
+            "messageId": "={{ $json.messageId }}",
+            "company": "={{ $json.company }}",
+            "clientSince": "={{ $json.clientSince }}",
+            "plan": "={{ $json.plan }}",
+            "lastOrder": "={{ $json.lastOrder }}",
+            "notes": "={{ $json.notes }}",
+            "existingClient": "={{ $json.existingClient }}",
+            "clientName": "={{ $json.clientName }}"
+          },
+          "matchingColumns": [
+            "headers_from",
+            "subject",
+            "text",
+            "id",
+            "threadId"
+          ],
+          "schema": [
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "threadId",
+              "displayName": "threadId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "senderName",
+              "displayName": "senderName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "senderEmail",
+              "displayName": "senderEmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "emailBody",
+              "displayName": "emailBody",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "clientSince",
+              "displayName": "clientSince",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "plan",
+              "displayName": "plan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "lastOrder",
+              "displayName": "lastOrder",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "existingClient",
+              "displayName": "existingClient",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "clientName",
+              "displayName": "clientName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        -1024
+      ],
+      "name": "Call client-support",
+      "id": "ac486e19-e53f-4e05-a045-27999db41e60"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "xQSdzQfIpkzY2u9Q",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/xQSdzQfIpkzY2u9Q",
+          "cachedResultName": "projects-and-service-inquiries"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "subject": "={{ $json.subject }}",
+            "messageId": "={{ $json.messageId }}",
+            "senderName": "={{ $json.senderName }}",
+            "senderEmail": "={{ $json.senderEmail }}",
+            "emailBody": "={{ $json.emailBody }}",
+            "threadId": "={{ $json.threadId }}",
+            "company": "={{ $json.company }}",
+            "clientSince": "={{ $json.clientSince }}",
+            "plan": "={{ $json.plan }}",
+            "lastOrder": "={{ $json.lastOrder }}",
+            "notes": "={{ $json.notes }}",
+            "clientName": "={{ $json.clientName }}",
+            "existingClient": "={{ $json.existingClient }}"
+          },
+          "matchingColumns": [
+            "headers_subject",
+            "headers_from",
+            "text",
+            "id",
+            "from_value",
+            "subject"
+          ],
+          "schema": [
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "threadId",
+              "displayName": "threadId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "senderName",
+              "displayName": "senderName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "senderEmail",
+              "displayName": "senderEmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "emailBody",
+              "displayName": "emailBody",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "existingClient",
+              "displayName": "existingClient",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "clientName",
+              "displayName": "clientName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "clientSince",
+              "displayName": "clientSince",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "plan",
+              "displayName": "plan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "lastOrder",
+              "displayName": "lastOrder",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        -640
+      ],
+      "name": "Call projects-and-service-inquiries",
+      "id": "f1eff0db-1fb5-4c25-82b1-67e398368a84"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "WeTXDNQlOVeOnvvl",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/WeTXDNQlOVeOnvvl",
+          "cachedResultName": "billing-and-payments"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "subject": "={{ $('Get a message').item.json.subject }}",
+            "messageId": "={{ $json.messageId }}",
+            "threadId": "={{ $json.threadId }}",
+            "senderName": "={{ $json.senderName }}",
+            "senderEmail": "={{ $json.senderEmail }}",
+            "emailBody": "={{ $json.emailBody }}",
+            "company": "={{ $json.company }}",
+            "clientSince": "={{ $json.clientSince }}",
+            "plan": "={{ $json.plan }}",
+            "lastOrder": "={{ $json.lastOrder }}",
+            "notes": "={{ $json.notes }}",
+            "existingClient": "={{ $json.existingClient }}",
+            "clientName": "={{ $json.clientName }}"
+          },
+          "matchingColumns": [
+            "Subject",
+            "snippet",
+            "From",
+            "id",
+            "From_firstItem",
+            "Subject_firstItem",
+            "snippet_firstItem",
+            "headers_subject_firstItem",
+            "headers_from_firstItem",
+            "id_firstItem"
+          ],
+          "schema": [
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "threadId",
+              "displayName": "threadId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "senderName",
+              "displayName": "senderName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "senderEmail",
+              "displayName": "senderEmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "emailBody",
+              "displayName": "emailBody",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "existingClient",
+              "displayName": "existingClient",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "clientName",
+              "displayName": "clientName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "clientSince",
+              "displayName": "clientSince",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "plan",
+              "displayName": "plan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "lastOrder",
+              "displayName": "lastOrder",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        -832
+      ],
+      "name": "Call billing-and-payments",
+      "id": "24081b13-1d70-47b8-a038-fe014194ea1b"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Fo4H25OGpVGm1jRB",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Fo4H25OGpVGm1jRB",
+          "cachedResultName": "team-and-operations"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "subject": "={{ $json.subject }}",
+            "senderEmail": "={{ $json.senderEmail }}",
+            "senderName": "={{ $json.senderName }}",
+            "messageId": "={{ $json.messageId }}",
+            "threadId": "={{ $json.threadId }}",
+            "emailBody": "={{ $json.emailBody }}",
+            "existingClient": "={{ $json.existingClient }}",
+            "company": "={{ $json.company }}",
+            "clientSince": "={{ $json.clientSince }}",
+            "plan": "={{ $json.plan }}",
+            "lastOrder": "={{ $json.lastOrder }}",
+            "notes": "={{ $json.notes }}",
+            "clientName": "={{ $json.clientName }}"
+          },
+          "matchingColumns": [
+            "id",
+            "subject",
+            "text"
+          ],
+          "schema": [
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "threadId",
+              "displayName": "threadId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "senderName",
+              "displayName": "senderName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "senderEmail",
+              "displayName": "senderEmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "emailBody",
+              "displayName": "emailBody",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "existingClient",
+              "displayName": "existingClient",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "clientName",
+              "displayName": "clientName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "clientSince",
+              "displayName": "clientSince",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "plan",
+              "displayName": "plan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "lastOrder",
+              "displayName": "lastOrder",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        -448
+      ],
+      "name": "Call team-and-operations",
+      "id": "44fc4791-1aad-449f-8cfe-e1953b4fb948"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        -256
+      ],
+      "id": "a1b6813f-1a33-4fe5-b617-db83702453b7",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $env.EMS_OPERATIONS_SHEET_ID }}",
+          "mode": "list",
+          "cachedResultName": "System Logs",
+          "cachedResultUrl": "={{ 'https://docs.google.com/spreadsheets/d/' + $env.EMS_OPERATIONS_SHEET_ID + '/edit?usp=drivesdk' }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 513432656,
+          "mode": "list",
+          "cachedResultName": "No Operation",
+          "cachedResultUrl": "={{ 'https://docs.google.com/spreadsheets/d/' + $env.EMS_OPERATIONS_SHEET_ID + '/edit#gid=513432656' }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date & Time": "={{ $now.toFormat('dd.MM.yyyy HH:mm') }}",
+            "From": "={{ $('Edit Fields').item.json.senderEmail }}",
+            "Subject ": "={{ $('Edit Fields').item.json.subject }}",
+            "Category": "Other",
+            "Agent": "None",
+            "Action": "No Operation"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date & Time",
+              "displayName": "Date & Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "From",
+              "displayName": "From",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Subject ",
+              "displayName": "Subject ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Agent",
+              "displayName": "Agent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Action",
+              "displayName": "Action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1568,
+        -256
+      ],
+      "id": "db97fb9b-47c8-4d1f-81d7-ff21f2e3d5ba",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Zkt5AfYhDY9bu68e",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Call client-support",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call billing-and-payments",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call projects-and-service-inquiries",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call team-and-operations",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a message": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "224fe86e-3b54-4749-af71-7fafd63891fe",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f16036b14ec005d72c1825cb15655ac025ac2d861a0f80604cddce9ea9a5af97"
+  },
+  "nodeGroups": [],
+  "id": "dZOFqTmER9qQCxwL",
+  "tags": []
+}

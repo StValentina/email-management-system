@@ -1,0 +1,189 @@
+{
+  "name": "load-faq-to-pinecone",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "eab5fb06-9735-4cd4-9b01-0ea12a77f9b9",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7d82c4b8-1c1f-4aab-ae71-7237d6d4db61",
+              "name": "text",
+              "value": "LINGUATECH SOLUTIONS\nCLIENT SUPPORT – FAQ AND POLICIES\n\n1. What are LinguaTech Solutions' support hours?\n\nStandard client support is available Monday to Friday, from 09:00 to 17:30 EET, excluding Bulgarian public holidays. Requests received outside support hours are processed on the next business day.\n\n2. How quickly does LinguaTech Solutions respond to support requests?\n\nFor clients with an active support plan, the target initial response time is within one business day. This is a response target and does not guarantee that the reported issue will be resolved within that period.\n\n3. How can a client report a technical problem?\n\nClients should send an email describing the problem, the affected service or project, when the problem started, and any relevant error message. Screenshots or examples may be included when appropriate. Clients should not send passwords, API keys, access tokens, or other authentication credentials by email.\n\n4. What support is included after a project is delivered?\n\nEvery completed project includes a 14-day post-delivery support period for clarification and correction of defects directly related to the agreed deliverables. New functionality, additional integrations, major changes, or work outside the agreed project scope are not included.\n\n5. What happens after the 14-day post-delivery period?\n\nSupport after the included 14-day period is available to clients with an active maintenance plan. Clients without an active plan may request additional support, but the work must be evaluated and approved separately before it is scheduled.\n\n6. Can a client request changes to an existing solution?\n\nYes. Minor corrections that fall within the agreed project scope can be reviewed as support requests. New features, new data sources, additional integrations, substantial prompt or workflow redesign, or changes to the original requirements are treated as new project work and require separate evaluation.\n\n7. Does LinguaTech Solutions guarantee the accuracy of AI or NLP systems?\n\nNo. AI, NLP, RAG and LLM-based systems may produce incomplete or incorrect results. LinguaTech Solutions tests solutions according to the agreed project requirements but does not guarantee 100% accuracy. High-impact outputs should be reviewed by a qualified person.\n\n8. What should a client do if a RAG or chatbot system returns incorrect information?\n\nThe client should provide the question or input that produced the incorrect result and, when possible, identify the expected source document or correct answer. LinguaTech Solutions will review whether the issue is related to the knowledge base, retrieval process, configuration, or model behavior.\n\n9. Can clients update documents used by their RAG system?\n\nDocument updates depend on the configuration agreed for the individual project. Clients should submit a support request describing which documents need to be added, replaced, or removed. LinguaTech Solutions will confirm whether the update is covered by the existing support arrangement or requires additional work.\n\n10. How does LinguaTech Solutions handle client data?\n\nClient data is used only for providing and supporting the contracted service. Access is limited to the information necessary for the relevant project or support request. Clients should not send unnecessary personal, confidential, or authentication data by email.\n\n11. Can LinguaTech Solutions provide passwords, API keys or other credentials through support email?\n\nNo. Support staff must not disclose passwords, API keys, access tokens, private keys, or other authentication credentials by email. Requests involving access credentials must be handled through an approved secure process or escalated to a human team member.\n\n12. Can a scheduled consultation be changed or cancelled?\n\nA consultation may be rescheduled or cancelled without charge when the request is received at least 24 hours before the scheduled start time. Requests made less than 24 hours before the appointment may require a new booking.\n\n13. Can Support provide a price for a new project or additional functionality?\n\nNo. Support may explain what is included in an existing service or support arrangement, but it must not create quotations, negotiate prices, or promise a price for new functionality or a new project. Such requests are handled as Projects & Service Inquiries.\n\n14. Can Support promise an exact completion date for a reported problem?\n\nNo. Support may provide confirmed information about the support process and existing arrangements, but it must not invent or guarantee a resolution deadline. If a completion date has not already been confirmed, the request should be reviewed by a human team member.\n\n15. When should a support request be escalated to a human?\n\nA request should be escalated when the available knowledge does not provide a reliable answer, when the client requests an exception to policy, when the issue concerns security or credentials, when contractual interpretation is required, when the client requests a guarantee that cannot be provided, or when the requested work may fall outside the existing service scope.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "03a2bea7-08d1-4dfd-80fd-3ade51af0150",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "customer-support",
+          "mode": "list",
+          "cachedResultName": "customer-support"
+        },
+        "options": {
+          "pineconeNamespace": "FAQ"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        480,
+        0
+      ],
+      "id": "e87faf58-ef3d-41b2-81cc-c4be2502475b",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "FqYaA1MjxZRWvdjx",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        240
+      ],
+      "id": "e8fbb22a-f77c-4ed5-a9d9-697b03367f64",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "aeKP4TgBNhDvZjMq",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.text }}",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        592,
+        240
+      ],
+      "id": "55786b5f-cb6e-4af2-8087-d8cbcbd88677",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 600,
+        "chunkOverlap": 80,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        672,
+        448
+      ],
+      "id": "2420c665-d3a7-4fcd-b53b-8bdcf5d599ff",
+      "name": "Recursive Character Text Splitter"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "e5673471-553e-4af2-b597-9307957c3ff9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f16036b14ec005d72c1825cb15655ac025ac2d861a0f80604cddce9ea9a5af97"
+  },
+  "nodeGroups": [],
+  "id": "H3K8Ru4ZLwBkN99H",
+  "tags": []
+}
